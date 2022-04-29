@@ -18,7 +18,7 @@ NEW_FILE_NAME = "ILDC.json"
 GROUP_NAME = "Jump_Servers"
 REMOTE_FILE_PASS = GAIA_USER + "@" + GAIA_IP + ":" + OLD_FILE_NAME
 LOCAL_FILE_PASS = "/tmp"
-GROUP_NAME = "Jump_Servers"
+
 
 print sys.argv
 
