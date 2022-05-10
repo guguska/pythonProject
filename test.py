@@ -22,7 +22,6 @@ LOCAL_FILE_PASS = "/tmp"
 
 
 def retrieve_gaia_pswd():
-
     try:
         pam_username = raw_input("Enter username:")
         pam_password = getpass.getpass("Enter password:")
@@ -44,7 +43,7 @@ def retrieve_gaia_pswd():
         headers = {
             'Content-Type': 'application/json',
             'Cookie':
-            'CA11111= \
+                'CA11111= \
              00000002A009FA1FBA8D395FB2E454F21D7A289588A7D91B3D3C82D5EE37FCEC8EC1C61F00000000; \
              CA22222=D81A400903E86AE54D2892CFCC11205242C1A20CFD151D40D85B8803D8D5AAEA; \
              CA33333=; CA55555 = ldap;CAPreferredAuth = ldap;mobileState = \
