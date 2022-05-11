@@ -5,19 +5,21 @@ import re
 import ssl
 import sys
 import time
+import paramiko
 
 ## admin@10.129.100.82:/var/tmp/ttt /tmp/"
 ###
+# noinspection SpellCheckingInspection
 PAM_HOSTNAME = "ilcyberweb-pam.teva.corp"
 PAM_LOGIN = "/PasswordVault/API/auth/ldap/Logon"
 GAIA_ACCOUNT_ID = "236_3"
 GAIA_ACC_URL = "/PasswordVault/api/Accounts/263_3/Password/Retrieve"
 GAIA_USER = "psadmin"
 GAIA_IP = "10.129.100.82"
-OLD_FILE_NAME = "/tmp/ILDC.json"
-NEW_FILE_NAME = "/tmp/ILDC.json"
+GAIA_PORT = 22
+REMOTE_PATH = "/tmp/ILDC.json"
+LOCAL_PATH = "/tmp/ILDC.json"
 GROUP_NAME = "Jump_Servers"
-REMOTE_FILE_PASS = GAIA_USER + "@" + GAIA_IP + ":" + OLD_FILE_NAME
 LOCAL_FILE_PASS = "/tmp"
 
 
@@ -89,19 +91,18 @@ def retrieve_gaia_pswd():
 
 ########################################################
 
-def scpcopy(DIRECTION, PSWD):
-    if DIRECTION == "PULL":
-        SCP_CMD = "sshpass -p " + PSWD + " scp " + REMOTE_FILE_PASS + " " + \
-                  LOCAL_FILE_PASS
+def scpcopy(direction, gaia_pswd):
+
+    trans = paramiko.Transport((GAIA_IP, GAIA_PORT))
+    trans.connect(username=GAIA_USER, password=gaia_pswd)
+    sftp = paramiko.SFTPClient.from_transport(trans)
+
+    if direction != "PULL":
+        sftp.put(localpath=LOCAL_PATH, remotepath=REMOTE_PATH)
     else:
-        SCP_CMD = "sshpass -p " + PSWD + " scp " + LOCAL_FILE_PASS + " " + \
-                  REMOTE_FILE_PASS
+        sftp.get(remotepath=REMOTE_PATH, localpath=LOCAL_PATH)
 
-    try:
-        call(SCP_CMD.split(" "))
-    except:
-        return False
-
+    trans.close()
     return True
 
 
@@ -145,28 +146,30 @@ except:
 
 ####################      Open current JSON file
 try:
-    with open(OLD_FILE_NAME) as old_file:
+    with open(LOCAL_PATH) as old_file:
         GenericDC = json.load(old_file)
 except:
     print("JSON is corrupted or does not exist")
     sys.exit(-1)
 
-for DC_OBJECT, DC_OBJECT_VALUE in GenericDC.items():
-    if DC_OBJECT == "objects":
+for dcObject, dcObjectValue in GenericDC.items():
+    if dcObject == "objects":
 
-        for x in DC_OBJECT_VALUE:
+        for x in dcObjectValue:
             if x["name"].upper() == GROUP_NAME.upper():
                 print(x["ranges"])
                 if new_ip not in x["ranges"]:
                     x["ranges"].append(new_ip)
                 print(x["name"] + "::", x["ranges"])
-        print(DC_OBJECT_VALUE)
-STR_JSON = json.dumps(GenericDC, indent=4, sort_keys=True)
-print(STR_JSON)
+        print(dcObjectValue)
+str_json = json.dumps(GenericDC, indent=4, sort_keys=True)
+print(str_json)
 
-with open(NEW_FILE_NAME, 'w') as NEW_FILE:
-    json.dump(GenericDC, NEW_FILE, indent=4, sort_keys=True)
-    NEW_FILE.close()
+with open(LOCAL_PATH, 'w') as new_file:
+    json.dump(GenericDC, new_file, indent=4, sort_keys=True)
+    new_file.close()
 
-if scpcopy("PUSH", pswd):
+if not scpcopy("PUSH", pswd):
+    print("IP address added successfully")
+else:
     print("Error sending JSON file")
