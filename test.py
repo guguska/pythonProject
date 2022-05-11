@@ -169,7 +169,7 @@ with open(LOCAL_PATH, 'w') as new_file:
     json.dump(GenericDC, new_file, indent=4, sort_keys=True)
     new_file.close()
 
-if not scpcopy("PUSH", pswd):
+if scpcopy("PUSH", pswd):
     print("IP address added successfully")
 else:
     print("Error sending JSON file")
