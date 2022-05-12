@@ -7,9 +7,6 @@ import sys
 import time
 import paramiko
 
-## admin@10.129.100.82:/var/tmp/ttt /tmp/"
-###
-# noinspection SpellCheckingInspection
 PAM_HOSTNAME = "ilcyberweb-pam.teva.corp"
 PAM_LOGIN = "/PasswordVault/API/auth/ldap/Logon"
 GAIA_ACCOUNT_ID = "236_3"
@@ -52,7 +49,7 @@ def retrieve_gaia_pswd():
             Desktop'
         }
 
-        print ("Retrievinf API token ... ")
+        print ("Retrieving API token ... ")
         conn.request("POST", PAM_LOGIN, payload, headers)
         response = conn.getresponse()
         api_token = json.loads(response.read())
@@ -92,17 +89,21 @@ def retrieve_gaia_pswd():
 ########################################################
 
 def scpcopy(direction, gaia_pswd):
-
     trans = paramiko.Transport((GAIA_IP, GAIA_PORT))
     trans.connect(username=GAIA_USER, password=gaia_pswd)
     sftp = paramiko.SFTPClient.from_transport(trans)
 
-    if direction != "PULL":
-        sftp.put(localpath=LOCAL_PATH, remotepath=REMOTE_PATH)
-    else:
-        sftp.get(remotepath=REMOTE_PATH, localpath=LOCAL_PATH)
+    try:
 
-    trans.close()
+        if direction != "PULL":
+            sftp.put(localpath=LOCAL_PATH, remotepath=REMOTE_PATH)
+        else:
+            sftp.get(remotepath=REMOTE_PATH, localpath=LOCAL_PATH)
+
+        trans.close()
+    except:
+        return False
+
     return True
 
 
