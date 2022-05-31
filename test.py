@@ -40,13 +40,7 @@ def retrieve_gaia_pswd():
         })
 
         headers = {
-            'Content-Type': 'application/json',
-            'Cookie':
-                'CA11111= \
-             00000002A009FA1FBA8D395FB2E454F21D7A289588A7D91B3D3C82D5EE37FCEC8EC1C61F00000000; \
-             CA22222=D81A400903E86AE54D2892CFCC11205242C1A20CFD151D40D85B8803D8D5AAEA; \
-             CA33333=; CA55555 = ldap;CAPreferredAuth = ldap;mobileState = \
-            Desktop'
+            'Content-Type': 'application/json'
         }
 
         print ("Retrieving API token ... ")
@@ -64,9 +58,7 @@ def retrieve_gaia_pswd():
 
         headers = {
             'Authorization': api_token,
-            'Content-Type': 'application/json',
-            'Cookie':
-                'CA11111=00000002B6A7AC188B2AB0966AF5D60C774AB9F68DBDBBEE7605CF0D11521399120BD43100000000; CA22222=3E325BFEF09950F37E17B5C2F5BEFFEBC3197BC2CF85067D6CA6FC059BD8DE02; CA33333=; CA55555=ldap; CAPreferredAuth=ldap; mobileState=Desktop'
+            'Content-Type': 'application/json'
         }
         print ("Retrieving GAIA password from the vault .... ")
         time.sleep(5)
@@ -85,8 +77,6 @@ def retrieve_gaia_pswd():
 
     return dbg_gaia_pass
 
-
-########################################################
 
 def scpcopy(direction, gaia_pswd):
     trans = paramiko.Transport((GAIA_IP, GAIA_PORT))
@@ -142,7 +132,8 @@ try:
         new_ip = raw_input("Enter IP address :")
         if ip(new_ip):
             break
-except:
+except KeyboardInterrupt:
+    print("Interrupted")
     sys.exit(-1)
 
 ####################      Open current JSON file
