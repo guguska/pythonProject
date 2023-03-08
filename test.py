@@ -9,10 +9,10 @@ import paramiko
 
 PAM_HOSTNAME = "ilcyberweb-pam.teva.corp"
 PAM_LOGIN = "/PasswordVault/API/auth/ldap/Logon"
-GAIA_ACCOUNT_ID = "236_3"
+GAIA_ACCOUNT_ID = "259_3"
 GAIA_ACC_URL = "/PasswordVault/api/Accounts/263_3/Password/Retrieve"
 GAIA_USER = "psadmin"
-GAIA_IP = "10.129.100.82"
+GAIA_IP = "10.128.92.44"
 GAIA_PORT = 22
 REMOTE_PATH = "/tmp/ILDC.json"
 LOCAL_PATH = "/tmp/ILDC.json"
